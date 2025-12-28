@@ -1,39 +1,61 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setQuery } from "../Redux/features/searchSlice";
 
 const SearchBar = () => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const trimmed = search.trim();
+    if (!trimmed) return;
+
+    // Set loading state
+    setIsLoading(true);
+
+    try {
+      // Dispatch the search query
+      dispatch(setQuery(trimmed));
+      
+      // Simulate API call delay for loading animation
+      await new Promise(resolve => setTimeout(resolve, 800));
+    } finally {
+      // Reset loading state
+      setIsLoading(false);
+    }
   };
+
   return (
-    <div>
-      <form
-        onSubmit={(e) => {
-          submitHandler(e);
-          dispatch(setQuery(search));
-        }}
-        className=" flex p-10 gap-5 bg-gray-900"
+    <form 
+      onSubmit={submitHandler} 
+      className="searchbar-enhanced"
+      role="form"
+    >
+      <input
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        required
+        className={`search-input-enhanced ${isLoading ? 'search-input-loading' : ''}`}
+        type="text"
+        placeholder="Search anything..."
+        disabled={isLoading}
+        aria-label="Search for media content"
+      />
+
+      <button
+        type="submit"
+        className={`search-button-enhanced ${isLoading ? 'search-button-loading' : ''}`}
+        disabled={isLoading}
+        aria-label={isLoading ? "Searching..." : "Search"}
       >
-        <input
-          required
-          className="border-2 px-4 py-2 text-xl rounded outline-none"
-          type="text"
-          placeholder=" Search Anything"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-          }}
-        />
-        <button className="border-2 px-4 py-2 text-xl rounded outline-none cursor-pointer active:scale-95">
-          {" "}
-          Search
-        </button>
-      </form>
-    </div>
+        <span className="button-text">
+          {isLoading ? "Searching..." : "Search"}
+        </span>
+      </button>
+    </form>
   );
 };
 

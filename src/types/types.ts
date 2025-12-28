@@ -28,7 +28,11 @@ export interface PhotoItem {
 
 export interface VideoResponse {
   videos: VideoItem[];
+  page: number;
+  per_page: number;
+  total_results: number;
 }
+
 
 export interface VideoItem {
   id: number;

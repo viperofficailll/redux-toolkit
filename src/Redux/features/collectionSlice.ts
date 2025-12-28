@@ -1,35 +1,54 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-export interface CounterState {
-  value: number;
+import type { MediaItem } from "../../types/types";
+import { toast } from "react-toastify";
+
+interface CollectionState {
+  items: MediaItem[];
 }
 
-const initialState: CounterState = {
-  value: 0,
+// Load initial items from localStorage
+const initialState: CollectionState = {
+  items: JSON.parse(localStorage.getItem("collection") || "[]"),
 };
 
-export const counterSlice = createSlice({
-  name: "counter",
+const collectionSlice = createSlice({
+  name: "collection",
   initialState,
   reducers: {
-    increment: (state) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state.value += 1;
+    addItem: (state, action: PayloadAction<MediaItem>) => {
+      const exists = state.items.some((item) => item.id === action.payload.id);
+      if (!exists) {
+        state.items.push(action.payload);
+        localStorage.setItem("collection", JSON.stringify(state.items));
+      }
     },
-    decrement: (state) => {
-      state.value -= 1;
+    removeItem: (state, action: PayloadAction<number | string>) => {
+      state.items = state.items.filter((item) => item.id !== action.payload);
+      localStorage.setItem("collection", JSON.stringify(state.items));
     },
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload;
+    clearCollection: (state) => {
+      state.items = [];
+      localStorage.setItem("collection", "[]");
+    },
+    addedToast: () => {
+      toast("Added to Collection");
+    },
+    removeToast: () => {
+      toast("Removed from collection");
+    },
+    clearedToast: () => {
+      toast("Collection cleared successufully");
     },
   },
 });
 
-// Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
-
-export default counterSlice.reducer;
+export const {
+  addItem,
+  removeItem,
+  clearCollection,
+  addedToast,
+  clearedToast,
+  removeToast,
+} = collectionSlice.actions;
+export default collectionSlice.reducer;

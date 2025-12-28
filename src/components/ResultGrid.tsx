@@ -10,8 +10,8 @@ import type {
   GifResponse,
   MediaItem,
   PhotoResponse,
-  VideoResponse,
 } from "../types/types";
+import ResultCard from "./ResultCard";
 
 const ResultGrid = () => {
   const { query, activeTab, loading, error, results } = useAppSelector(
@@ -41,13 +41,14 @@ const ResultGrid = () => {
         }
 
         if (activeTab === "videos") {
-          const response: VideoResponse = await fetchVideos(query);
+          const response = await fetchVideos(query);
+
           data = response.videos.map((item) => ({
             id: item.id,
             type: "video",
-            title: item.user.name || "Video",
+            title: item.user?.name || "Video",
             thumbnail: item.image,
-            src: item.video_files[0].link,
+            src: item.video_files?.[0]?.link ?? "",
             url: item.url,
           }));
         }
@@ -77,19 +78,14 @@ const ResultGrid = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-      {results.map((item) => (
-        <div key={item.id} className="border rounded overflow-hidden">
-          <img
-            src={item.thumbnail}
-            alt={item.title}
-            className="w-full h-48 object-cover"
-          />
-          <div className="p-2">
-            <p className="text-sm truncate">{item.title}</p>
+    <div className="flex justify-between w-full flex-wrap gap-6 overflow-auto px-10">
+      {results.map((item, idx) => {
+        return (
+          <div key={idx}>
+            <ResultCard item={item} />
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

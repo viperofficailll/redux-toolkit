@@ -1170,26 +1170,8 @@ In Redux DevTools:
 7. **Use RTK Query** – Don't reinvent API layer
 8. **Optimize re-renders** – Use `useSelector` wisely
 
----
 
-## 📚 What's Next?
 
-Want more advanced topics?
-
-- ✨ Redux + Next.js (SSR/SSG)
-- ✨ Redux + React Native
-- ✨ Advanced caching strategies
-- ✨ Real-time with Redux (WebSockets)
-- ✨ Redux vs Zustand vs Jotai
-- ✨ Complete e-commerce example
-
----
-
-## 📝 License
-
-MIT © 2024
-
----
 
 ## 🤝 Contributing
 
